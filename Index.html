@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Controle de Rifa por Carnês</title>
-
-  <!-- CSS e Fontes -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Rifa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
+  
   <style>
     :root {
       --ink: #17212b;
@@ -14,108 +16,233 @@
       --leaf: #246b58;
       --sun: #f6c85f;
       --line: #d9d1c3;
+      --white: #fffdf8;
     }
 
     * { box-sizing: border-box; }
-    body { font-family: "DM Sans", sans-serif; color: var(--ink); margin: 0; background-color: var(--paper); }
+    
+    body {
+      font-family: "DM Sans", sans-serif;
+      color: var(--ink);
+      margin: 0;
+      background-color: var(--paper);
+      padding: 2rem;
+    }
+
     .display-font { font-family: "Fraunces", serif; }
 
-    .summary-ring {
-      width: 164px; height: 164px; border-radius: 999px;
-      background: conic-gradient(var(--coral) 0deg, var(--coral) 0deg, #e7dfd2 0deg, #e7dfd2 360deg);
-      position: relative; transition: background .45s ease;
-    }
-    .summary-ring::after {
-      content: ""; position: absolute; inset: 17px;
-      border-radius: inherit; background: #fffdf8;
-      box-shadow: inset 0 0 0 1px rgba(23,33,43,.06);
-    }
-    .ring-center { position: absolute; z-index: 1; inset: 0; display: grid; place-content: center; text-align: center; }
-
-    .raffle-number {
-      min-height: 76px; border: 1px solid var(--line);
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
-      border-radius: 12px; padding: 12px;
-    }
+    header { margin-bottom: 2rem; }
     
-    /* Estados das Cores */
-    .raffle-number.available { background: #fffdf8; color: #17212b; }
-    .raffle-number.reserved { background: var(--sun); color: #17212b; }
-    .raffle-number.paid { background: var(--leaf) !important; color: #ffffff !important; }
+    .badge {
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-    .action-button { transition: transform .18s ease, filter .18s ease; cursor: pointer; }
-    .action-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(.98); }
-    
+    h1 {
+      font-size: 2.2rem;
+      margin: 0.3rem 0;
+    }
+
+    p.subtitle {
+      color: #655d54;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .card-panel {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 20px rgba(23, 33, 43, 0.04);
+    }
+
     .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; }
-    .form-group input { width: 100%; padding: 0.5rem; border: 1px solid var(--line); border-radius: 8px; }
-    .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; }
-    .status-message { min-height: 1.3rem; }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-group input[type="number"],
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #faf7f2;
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--leaf);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 1.2rem 0;
+      background: #faf7f2;
+      padding: 0.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    .checkbox-group input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--leaf);
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--leaf);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      filter: brightness(0.95);
+    }
+
+    .raffle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 0.8rem;
+    }
+
+    .raffle-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.8rem 0.6rem;
+      text-align: center;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 72px;
+    }
+
+    .raffle-card.reserved {
+      background: var(--sun);
+      border-color: transparent;
+      color: var(--ink);
+    }
+
+    .raffle-card.paid {
+      background: var(--leaf) !important;
+      border-color: transparent;
+      color: #ffffff !important;
+    }
+
+    .raffle-card .num {
+      font-size: 1.3rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .raffle-card .status-tag {
+      font-size: 0.7rem;
+      margin-top: 4px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    #form-status {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 0.8rem;
+      min-height: 1.2rem;
+    }
   </style>
 </head>
 <body>
 
-  <header style="padding: 2rem;">
-    <span style="color: var(--coral); text-transform: uppercase; font-size: 0.8rem; font-weight: bold;">● Rifa em andamento</span>
-    <h1 class="display-font" style="font-size: 2.5rem; margin-top: 0.2rem;">Controle de Rifa</h1>
-    <p>Registre as vendas por carnê e acompanhe o status dos pagamentos em tempo real.</p>
+  <header>
+    <span class="badge">● Rifa em andamento</span>
+    <h1 class="display-font">Controle de Rifa</h1>
+    <p class="subtitle">Registre as vendas e acompanhe os carnês e cotas em tempo real.</p>
   </header>
 
-  <main style="display: flex; gap: 2rem; padding: 0 2rem; flex-wrap: wrap;">
-    
-    <!-- Formulário de Registro -->
-    <section style="background: #fffdf8; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--line); max-width: 320px; width: 100%;">
-      <h2 class="display-font">Registrar Venda</h2>
-      <p style="font-size: 0.85rem; color: #655d54;">Cadastre vendas e marque a confirmação do pagamento.</p>
+  <div class="layout">
+    <!-- Formulário -->
+    <div class="card-panel">
+      <h3 class="display-font" style="margin-top:0; font-size:1.3rem;">Registrar Venda</h3>
+      <p style="font-size: 0.8rem; color: #655d54; margin-bottom: 1.2rem;">Escolha o número do carnê e a cota.</p>
 
       <form id="sale-form">
         <div class="form-group">
           <label for="raffle-number">Número do Carnê (1 a 100)</label>
-          <input type="number" id="raffle-number" min="1" max="100" placeholder="Ex: 5" required />
+          <input type="number" id="raffle-number" min="1" max="100" placeholder="Ex: 12" required>
         </div>
 
         <div class="form-group">
           <label for="sub-number">Cota / Subnúmero (1 a 10)</label>
-          <input type="number" id="sub-number" min="1" max="10" value="1" required />
+          <input type="number" id="sub-number" min="1" max="10" value="1" required>
         </div>
 
         <div class="form-group">
           <label for="buyer-name">Nome do Comprador</label>
-          <input type="text" id="buyer-name" placeholder="Digite o nome..." required />
+          <input type="text" id="buyer-name" placeholder="Digite o nome..." required>
         </div>
 
         <div class="checkbox-group">
-          <input type="checkbox" id="payment-check" style="width: 18px; height: 18px;" />
-          <label for="payment-check" style="margin: 0;">Pagamento Confirmado (PAGO)</label>
+          <input type="checkbox" id="payment-check">
+          <label for="payment-check">Pagamento Confirmado (PAGO)</label>
         </div>
 
-        <button type="submit" id="save-button" class="action-button" style="width: 100%; margin-top: 1.5rem; padding: 0.75rem; background: var(--leaf); color: white; border: none; border-radius: 8px; font-weight: bold;">
-          Registrar Venda
-        </button>
+        <button type="submit" id="save-button" class="btn-submit">Registrar Venda</button>
       </form>
 
-      <div id="form-status" class="status-message"></div>
-    </section>
+      <div id="form-status"></div>
+    </div>
 
-    <!-- Grade dos Carnês -->
-    <section style="flex: 1; min-width: 300px;">
-      <h2 class="display-font">Mapa dos Carnês</h2>
-      <p style="font-size: 0.85rem; color: #655d54;">Abaixo estão os 100 carnês da rifa.</p>
-      
-      <div id="raffle-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 1rem;">
-        <!-- Os 100 cards dos carnês serão inseridos dinamicamente via JS -->
-      </div>
-    </section>
+    <!-- Mapa de Números -->
+    <div>
+      <h3 class="display-font" style="margin-top:0; font-size:1.3rem; margin-bottom: 1rem;">Mapa Completo dos Carnês</h3>
+      <div id="raffle-grid" class="raffle-grid"></div>
+    </div>
+  </div>
 
-  </main>
-
-  <!-- Lógica do Sistema em JavaScript -->
   <script>
     const TOTAL_CARNES = 100;
     const SUB_PER_CARNE = 10;
-
     let records = [];
-    let isSaving = false;
 
     const grid = document.getElementById("raffle-grid");
     const saleForm = document.getElementById("sale-form");
@@ -123,17 +250,15 @@
     const subInput = document.getElementById("sub-number");
     const buyerInput = document.getElementById("buyer-name");
     const paymentCheck = document.getElementById("payment-check");
-    const saveButton = document.getElementById("save-button");
     const formStatus = document.getElementById("form-status");
 
-    function setStatus(message, tone = "normal") {
-      formStatus.textContent = message;
-      formStatus.style.color = tone === "error" ? "#f05d4e" : tone === "success" ? "#246b58" : "#655d54";
+    function setStatus(msg, isError) {
+      formStatus.textContent = msg;
+      formStatus.style.color = isError ? "#f05d4e" : "#246b58";
     }
 
     function recordForSubNumber(carneNum, subNum) {
-      const code = `${carneNum}.${subNum}`;
-      return records.find(r => r.sub_code === code);
+      return records.find(r => r.sub_code === `${carneNum}.${subNum}`);
     }
 
     function getCarneStatus(carneNum) {
@@ -155,77 +280,37 @@
 
     function syncGrid() {
       grid.innerHTML = "";
-
       for (let i = 1; i <= TOTAL_CARNES; i++) {
         const card = document.createElement("div");
-        card.className = "raffle-number";
-        
         const status = getCarneStatus(i);
-        card.classList.add(status);
+        card.className = `raffle-card ${status}`;
 
-        const numberLabel = document.createElement("div");
-        numberLabel.className = "display-font";
-        numberLabel.style.fontSize = "1.2rem";
-        numberLabel.style.fontWeight = "bold";
-        numberLabel.textContent = String(i).padStart(2, "0");
+        let statusText = "Disponível";
+        if (status === "paid") statusText = "Carnê Pago";
+        else if (status === "reserved") statusText = "Em Andamento";
 
-        const statusLabel = document.createElement("div");
-        statusLabel.style.fontSize = "0.75rem";
-        statusLabel.style.marginTop = "4px";
-
-        if (status === "paid") {
-          statusLabel.textContent = "Carnê Pago";
-        } else if (status === "reserved") {
-          statusLabel.textContent = "Em Andamento";
-        } else {
-          statusLabel.textContent = "Disponível";
-        }
-
-        card.appendChild(numberLabel);
-        card.appendChild(statusLabel);
+        card.innerHTML = `
+          <div class="num display-font">${String(i).padStart(2, "0")}</div>
+          <div class="status-tag">${statusText}</div>
+        `;
         grid.appendChild(card);
       }
     }
 
-    function setSaving(saving) {
-      isSaving = saving;
-      saveButton.disabled = saving;
-      numberInput.disabled = saving;
-      subInput.disabled = saving;
-      buyerInput.disabled = saving;
-    }
-
-    saleForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
+    saleForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
       const carneNum = Number(numberInput.value);
       const subNum = Number(subInput.value);
       const buyerName = buyerInput.value.trim();
       const isPaid = paymentCheck.checked;
-
-      if (!Number.isInteger(carneNum) || carneNum < 1 || carneNum > TOTAL_CARNES) {
-        setStatus("Escolha um número de carnê entre 1 e 100.", "error");
-        return;
-      }
-
-      if (!Number.isInteger(subNum) || subNum < 1 || subNum > SUB_PER_CARNE) {
-        setStatus("Escolha uma cota entre 1 e 10.", "error");
-        return;
-      }
-
-      if (!buyerName) {
-        setStatus("Informe o nome do comprador.", "error");
-        return;
-      }
-
       const subCode = `${carneNum}.${subNum}`;
+
       if (records.find(r => r.sub_code === subCode)) {
-        setStatus(`A cota ${subCode} já foi registrada.`, "error");
+        setStatus(`Cota ${subCode} já foi registrada.`, true);
         return;
       }
 
-      setSaving(true);
-      setStatus("Salvando venda…");
+      setStatus("Salvando venda…", false);
 
       const newRecord = {
         carne_number: carneNum,
@@ -236,27 +321,22 @@
         created_at: new Date().toISOString()
       };
 
-      // Integração com a SDK do Canva / banco de dados local
       if (window.dataSdk) {
         const result = await window.dataSdk.create(newRecord);
-        setSaving(false);
         if (result.isOk) {
           saleForm.reset();
-          setStatus(`Cota ${subCode} registrada com sucesso!`, "success");
+          setStatus(`Cota ${subCode} registrada com sucesso!`, false);
         } else {
-          setStatus("Erro ao salvar a venda.", "error");
+          setStatus("Erro ao salvar a venda.", true);
         }
       } else {
-        // Fallback local se estiver testando fora do Canva
         records.push(newRecord);
-        setSaving(false);
         saleForm.reset();
         syncGrid();
-        setStatus(`Cota ${subCode} registrada!`, "success");
+        setStatus(`Cota ${subCode} registrada!`, false);
       }
     });
 
-    // Inicialização
     document.addEventListener("DOMContentLoaded", () => {
       syncGrid();
       if (window.dataSdk) {
